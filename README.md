@@ -21,8 +21,7 @@
 ```bash
 npm install -g npx
 ```
-
-  - Instalando bibliotecas
+  -  Instalando bibliotecas
 ```bash
 npm install
 npx expo install react-native-camera-vision
