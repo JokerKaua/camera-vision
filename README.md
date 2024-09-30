@@ -18,15 +18,15 @@
 - Comandos de instalação e configuração
 
   -  Instalar npx
-```bash
-npm install -g npx
-```
+    ```bash
+    npm install -g npx
+    ```
   -  Instalando bibliotecas
-```bash
-npm install
-npx expo install react-native-camera-vision
-npx expo install expo-media-library
-```
+    ```bash
+    npm install
+    npx expo install react-native-camera-vision
+    npx expo install expo-media-library
+    ```
  - Expo build pro android
 ```bash
 npx expo prebuild
