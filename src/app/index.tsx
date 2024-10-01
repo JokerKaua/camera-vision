@@ -46,7 +46,8 @@ export default function Index() {
         try { 
           // Salvando o vídeo na galeria através da biblioteca do expo, MediaLibrary
           const asset = MediaLibrary.createAssetAsync(video.path);
-          console.log(`Video salvo na galeria: ${asset}`);
+          console.log(`Video salvo na galeria:`);
+          console.log(asset);
         } catch (error) {
           console.error(error);
         }
