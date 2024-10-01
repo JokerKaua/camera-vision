@@ -1,6 +1,6 @@
 // Imports das bilbiotecas
 import { useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Camera, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
 
@@ -9,6 +9,10 @@ import { MediaViewer } from '../components/MediaViewer';
 import MediaSettings from '../components/MediaSettings';
 
 // Imports components
+
+
+// Criando components animados
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 
 // Função que será retornada (basicamente a telas)
@@ -70,7 +74,6 @@ export default function Index() {
     await cameraRef.current?.stopRecording();
     console.log(`Gravação finalizada!`);
   }
-
   // Função para tirar foto e salvar na galeria
   const takePhoto = async () => {
     const photo = await cameraRef.current?.takePhoto();
@@ -79,11 +82,9 @@ export default function Index() {
       console.log(`Foto armazenada na galeria!`);
     }
   }
-
   // Veja mais sobre useEffect do react
   // Aqui é para requisitar as permissões
   useEffect(() => {
-
     // Requisitando permissões
     const requestsPermissions = async () => {
       const status = await requestPermission(); // O nome do método tem que ser igual o que está na linha 18
@@ -101,6 +102,18 @@ export default function Index() {
     requestsPermissions()
 
   }, []);
+
+  // Animações 
+  const borderAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(borderAnim, {
+      toValue: isRecording ? 6 : 0, // Altera para 10 quando gravando e 0 quando não
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [isRecording]);
+
 
   // Essa condição verifica se estão inválidos as permissões e os dispositivo da camera e então retorna nada para caso a condição for atendida
   if (!permission || (!device)) {
@@ -122,11 +135,13 @@ export default function Index() {
 
       <View style={styles.footer}>
         <MediaViewer />
-        <Pressable
-          style={styles.cameraButton}
+        {/* <Pressable */}
+         <AnimatedPressable
+          style={[styles.cameraButton, { borderWidth: borderAnim, borderColor: 'red' }]}
           onPress={() => {
             takePhoto()
           }}
+          delayLongPress={200}
           onLongPress={() => {
             if (!isRecording) {
               startRecording();
@@ -137,8 +152,9 @@ export default function Index() {
               stopRecording();
             }
           }}>
-        </Pressable>
-        <MediaSettings/>
+        </AnimatedPressable>
+        {/* </Pressable> */}
+        <MediaSettings />
       </View>
 
     </View>
@@ -155,9 +171,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   cameraButton: {
-    width: 80,
+    width: 70,
     backgroundColor: '#c8c8c8',
-    height: 80,
+    height: 70,
     borderRadius: 100,
     opacity: 0.6,
     alignSelf: 'center'
