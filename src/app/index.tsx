@@ -5,6 +5,11 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Camera, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
 
 import * as MediaLibrary from 'expo-media-library';
+import { MediaViewer } from '../components/MediaViewer';
+import MediaSettings from '../components/MediaSettings';
+
+// Imports components
+
 
 // Função que será retornada (basicamente a telas)
 export default function Index() {
@@ -31,10 +36,10 @@ export default function Index() {
       return
     }
     // Define a variavel isRecording como `true`
-    setIsRecording(true); 
+    setIsRecording(true);
 
     console.log(`Gravando...`);
-  
+
     // Utilizando o ref para começar a grtavar
     cameraRef.current?.startRecording({
       // Propriedades do método startRecording - veja https://react-native-vision-camera.com/docs/api/classes/Camera#startrecording 
@@ -42,8 +47,8 @@ export default function Index() {
       videoCodec: 'h265',
       onRecordingFinished: (video) => {
         console.log(video);
-        
-        try { 
+
+        try {
           // Salvando o vídeo na galeria através da biblioteca do expo, MediaLibrary
           const asset = MediaLibrary.createAssetAsync(video.path);
           console.log(`Video salvo na galeria:`);
@@ -69,7 +74,7 @@ export default function Index() {
   // Função para tirar foto e salvar na galeria
   const takePhoto = async () => {
     const photo = await cameraRef.current?.takePhoto();
-    if(photo){
+    if (photo) {
       const asset = MediaLibrary.createAssetAsync(photo?.path)
       console.log(`Foto armazenada na galeria!`);
     }
@@ -114,24 +119,28 @@ export default function Index() {
         photo={true}
 
       />
-      <Pressable
-        style={styles.cameraButton}
-        onPress={()=>{
-          takePhoto()
-        }}
-        onLongPress={()=>{
-          if(!isRecording){
-            startRecording();
-          }
-        }}
-        onPressOut={()=>{
-          if(isRecording){
-            stopRecording();
-          }
-        }}
-      >
 
-      </Pressable>
+      <View style={styles.footer}>
+        <MediaViewer />
+        <Pressable
+          style={styles.cameraButton}
+          onPress={() => {
+            takePhoto()
+          }}
+          onLongPress={() => {
+            if (!isRecording) {
+              startRecording();
+            }
+          }}
+          onPressOut={() => {
+            if (isRecording) {
+              stopRecording();
+            }
+          }}>
+        </Pressable>
+        <MediaSettings/>
+      </View>
+
     </View>
   );
 
@@ -150,10 +159,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#c8c8c8',
     height: 80,
     borderRadius: 100,
-    position: 'absolute',
-    bottom: 32,
-    zIndex: 1000,
-    opacity: 0.6
-
+    opacity: 0.6,
+    alignSelf: 'center'
+  },
+  footer: {
+    position: `absolute`,
+    bottom: 16,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around'
   }
 });
