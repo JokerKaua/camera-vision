@@ -14,7 +14,6 @@ import MediaSettings from '../components/MediaSettings';
 // Criando components animados
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-
 // Função que será retornada (basicamente a telas)
 export default function Index() {
 
@@ -87,8 +86,8 @@ export default function Index() {
   useEffect(() => {
     // Requisitando permissões
     const requestsPermissions = async () => {
-      const status = await requestPermission(); // O nome do método tem que ser igual o que está na linha 18
-      const mediaStatus = await requestPermissionMedia(); // O nome do método tem que ser igual o que está na linha 19
+      const status = await requestPermission(); // O nome do método tem que ser igual o que está na linha 26
+      const mediaStatus = await requestPermissionMedia(); // O nome do método tem que ser igual o que está na linha 27
 
       // Condição para verificar se os status (camera) e o mediaStatus (arquivos) estão aceitos
       if (status && mediaStatus?.granted) {
@@ -108,7 +107,7 @@ export default function Index() {
 
   useEffect(() => {
     Animated.timing(borderAnim, {
-      toValue: isRecording ? 6 : 0, // Altera para 10 quando gravando e 0 quando não
+      toValue: isRecording ? 6 : 0, // Altera para 6 quando gravando e 0 quando não
       duration: 300,
       useNativeDriver: false,
     }).start();
