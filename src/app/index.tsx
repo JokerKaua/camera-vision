@@ -121,10 +121,9 @@ export default function Index() {
   // Caso a condição não retorne, esse vai ser o return padrão
   return (
     <View style={styles.container}>
-      <Text>Camera app</Text>
       <Camera
         ref={cameraRef}
-        style={StyleSheet.absoluteFill}
+        style={[StyleSheet.absoluteFill]}
         device={device}
         isActive={true}
         video={true}
@@ -133,7 +132,7 @@ export default function Index() {
       />
 
       <View style={styles.footer}>
-        <MediaViewer />
+        <MediaViewer/>
         {/* <Pressable */}
          <AnimatedPressable
           style={[styles.cameraButton, { borderWidth: borderAnim, borderColor: 'red' }]}
