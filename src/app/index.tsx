@@ -5,33 +5,33 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Camera, useCameraDevice, useCameraPermission } from 'react-native-vision-camera';
 
 import * as MediaLibrary from 'expo-media-library';
-import { MediaViewer } from '../components/MediaViewer';
-import MediaSettings from '../components/MediaSettings';
 
 // Imports components
-
+import { MediaViewer } from '../components/MediaViewer';
+import MediaSettings from '../components/MediaSettings';
 
 // Criando components animados
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-// Função que será retornada (basicamente a telas)
+
 export default function Index() {
 
-  // Declarando o dispositivo da camerca, no caso, a camera traseira
+  // Declarando o dispositivo da camera
   const device = useCameraDevice('back');
-  // Utilizando uma variavel como referencia para um elemento, precisa estar nas propriedades do elemento <Camera> tambem
   const cameraRef = useRef<Camera>(null);
 
-  // Pegar variáveis e métodos de permissões para uso de camera e acesso aos arquivos
+  // Permissons
   const { hasPermission, requestPermission } = useCameraPermission();
   const [permissionResponse, requestPermissionMedia] = MediaLibrary.usePermissions();
 
-  // Variáveis e setters para controle das permissiões, as variáveis são `permission` e `isRecording`, ambas booleans (true ou false)
-  // Pesquise mais sobre useState do react
   const [permission, setPermission] = useState<boolean | null>(null);
   const [isRecording, setIsRecording] = useState<boolean>(false);
 
-  // Criando função para iniciar uma gravação
+  // Variables 
+  const [lastVideoUri, setLastVideoUri] = useState<string | null>(null);
+
+
+  // Functions
   const startRecording = async () => {
     // Caso não tenha ref e nem um device, não será executada
     if (!cameraRef || !device) {
@@ -48,14 +48,14 @@ export default function Index() {
       // Propriedades do método startRecording - veja https://react-native-vision-camera.com/docs/api/classes/Camera#startrecording 
       fileType: 'mp4',
       videoCodec: 'h265',
-      onRecordingFinished: (video) => {
+      onRecordingFinished: async (video) => {
         console.log(video);
-
         try {
           // Salvando o vídeo na galeria através da biblioteca do expo, MediaLibrary
-          const asset = MediaLibrary.createAssetAsync(video.path);
-          console.log(`Video salvo na galeria:`);
-          console.log(asset);
+          const asset = await MediaLibrary.createAssetAsync(video.path); 
+          setLastVideoUri(asset.id);
+          
+          console.log(`Video salvo na galeria!`);
         } catch (error) {
           console.error(error);
         }
@@ -66,43 +66,41 @@ export default function Index() {
       },
     });
   }
-  // Função para parar de gravar
   const stopRecording = async () => {
     // Definie isRecording como false
     setIsRecording(false);
     await cameraRef.current?.stopRecording();
     console.log(`Gravação finalizada!`);
   }
-  // Função para tirar foto e salvar na galeria
   const takePhoto = async () => {
     const photo = await cameraRef.current?.takePhoto();
+
     if (photo) {
-      const asset = MediaLibrary.createAssetAsync(photo?.path)
+      const asset = await MediaLibrary.createAssetAsync(photo?.path);
+      setLastVideoUri(asset.id);
+
       console.log(`Foto armazenada na galeria!`);
     }
   }
-  // Veja mais sobre useEffect do react
-  // Aqui é para requisitar as permissões
-  useEffect(() => {
-    // Requisitando permissões
-    const requestsPermissions = async () => {
-      const status = await requestPermission(); // O nome do método tem que ser igual o que está na linha 26
-      const mediaStatus = await requestPermissionMedia(); // O nome do método tem que ser igual o que está na linha 27
 
-      // Condição para verificar se os status (camera) e o mediaStatus (arquivos) estão aceitos
+  // Request permissions
+  useEffect(() => {
+
+    const requestsPermissions = async () => {
+      const status = await requestPermission(); 
+      const mediaStatus = await requestPermissionMedia(); 
+
       if (status && mediaStatus?.granted) {
-        setPermission(true) // Define a variável permission como true
+        setPermission(true) 
         console.log('Permission accepted');
       } else {
         console.log('Permissões negadas');
       }
     }
-    // O useEffect funciona meio que como um loop, então tem que chamar essa requestPermission aqui
     requestsPermissions()
-
   }, []);
 
-  // Animações 
+  // Animations 
   const borderAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -114,11 +112,9 @@ export default function Index() {
   }, [isRecording]);
 
 
-  // Essa condição verifica se estão inválidos as permissões e os dispositivo da camera e então retorna nada para caso a condição for atendida
-  if (!permission || (!device)) {
+  if (!permission || !device) 
     return <View></View>
-  }
-  // Caso a condição não retorne, esse vai ser o return padrão
+  
   return (
     <View style={styles.container}>
       <Camera
@@ -132,8 +128,7 @@ export default function Index() {
       />
 
       <View style={styles.footer}>
-        <MediaViewer/>
-        {/* <Pressable */}
+        <MediaViewer lastMediaUri={lastVideoUri}/>
          <AnimatedPressable
           style={[styles.cameraButton, { borderWidth: borderAnim, borderColor: 'red' }]}
           onPress={() => {
@@ -151,16 +146,13 @@ export default function Index() {
             }
           }}>
         </AnimatedPressable>
-        {/* </Pressable> */}
         <MediaSettings />
       </View>
 
     </View>
   );
-
 }
 
-// Estilizalção
 const styles = StyleSheet.create({
   container: {
     flex: 1,
