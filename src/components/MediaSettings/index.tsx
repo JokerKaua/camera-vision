@@ -8,7 +8,7 @@ export default function MediaSettings() {
   const [visible, setVisible] = useState<boolean>(false);
 
   const rotationGear = useRef(new Animated.Value(0)).current;
-  const colorGear = useRef(new Animated.Value(0)).current;
+  const scaleGear = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
 
@@ -18,8 +18,8 @@ export default function MediaSettings() {
       useNativeDriver: true
     }).start();
 
-    Animated.timing(colorGear, {
-      toValue: visible ? 1 : 0,
+    Animated.timing(scaleGear, {
+      toValue: visible ? 1.25 : 1,
       duration: 300,
       useNativeDriver: true
     }).start();
@@ -40,13 +40,12 @@ export default function MediaSettings() {
       <Animated.View style={[{
         transform: [
           { rotate: rotationGear.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '80deg'] }) },
-          { scale: colorGear.interpolate({ inputRange: [0, 1], outputRange: [1, 1.25] }) }
+          { scale: scaleGear }
         ]
       }]}>
-        <Ionicons name="settings-outline" size={24} color={'#c0c0c0'} />
+        <Ionicons name="settings-outline" size={24} color={'#c0c0c0'}/>
       </Animated.View>
     </Pressable>
-
   )
 }
 

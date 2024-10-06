@@ -8,7 +8,7 @@ export default function Layout() {
             }}
         >
             <Stack.Screen name="index" options={{ headerShown: true, title: 'Home'}}/>
-            <Stack.Screen name="(Stack)"/>
+            <Stack.Screen name="(tabs)"/>
         </Stack>
     )
 }
