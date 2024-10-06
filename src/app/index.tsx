@@ -13,7 +13,6 @@ import MediaSettings from '../components/MediaSettings';
 // Criando components animados
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-
 export default function Index() {
 
   // Declarando o dispositivo da camera
@@ -66,6 +65,7 @@ export default function Index() {
       },
     });
   }
+  
   const stopRecording = async () => {
     // Definie isRecording como false
     setIsRecording(false);
@@ -101,7 +101,7 @@ export default function Index() {
   }, []);
 
   // Animations 
-  const borderAnim = useRef(new Animated.Value(0)).current;
+  const borderAnim = useRef(new Animated.Value(0)).current; 
 
   useEffect(() => {
     Animated.timing(borderAnim, {
